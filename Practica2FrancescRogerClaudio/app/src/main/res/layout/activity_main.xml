@@ -22,11 +22,26 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <EditText
+            android:id="@+id/etx_placeToWrite"
+            android:layout_width="match_parent"
+            android:layout_height="106dp"
+            android:ems="10"
+            android:digits="abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ"
+            android:inputType="text"
+            android:maxLength="1" />
+
         <Button
             android:id="@+id/B_getword"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="GET" />
+
+        <Button
+            android:id="@+id/B_addLetter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Button" />
     </LinearLayout>
 
 </RelativeLayout>
