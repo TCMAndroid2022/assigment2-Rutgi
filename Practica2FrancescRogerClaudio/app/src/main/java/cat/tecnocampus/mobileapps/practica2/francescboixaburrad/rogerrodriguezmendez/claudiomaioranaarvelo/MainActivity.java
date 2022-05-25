@@ -1,6 +1,8 @@
 package cat.tecnocampus.mobileapps.practica2.francescboixaburrad.rogerrodriguezmendez.claudiomaioranaarvelo;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +22,8 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
 
@@ -33,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     String wordResult="";
     String wordPlayer="";
 
+    UserViewModel userViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +50,22 @@ public class MainActivity extends AppCompatActivity {
         etx_placeToWrite = findViewById(R.id.etx_placeToWrite);
         rqueue = Volley.newRequestQueue(getApplicationContext());
 
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+
+        userViewModel.getAllUsersGame().observe(this, new Observer<List<UserWithGames>>() {
+            @Override
+            public void onChanged(List<UserWithGames> userWithGames) {
+                try{
+                    List<UserWithGames> allUsers = userViewModel.getAllUsersGame().getValue();
+                    Log.v("Clau",allUsers.toString());
+                }catch (Exception e){
+
+                }
+            }
+        });
+
+        userViewModel.insertUser("rutgi",5);
+        userViewModel.insertGame(1,1,100,"maio");
 
         b_getRand.setOnClickListener(new View.OnClickListener() {
             @Override
