@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cat.tecnocampus.mobileapps.practica2.francescboixaburrad.rogerrodriguezmendez.claudiomaioranaarvelo">
-    <uses-permission android:name="android.permission.INTERNET" /> <!--//todo aixó cal afegiro -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!--//todo aixó cal afegiro -->
+
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- //todo aixó cal afegiro -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -11,6 +12,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Practica2FrancescRogerClaudio">
+        <activity
+            android:name=".InfoPlayerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RankingActivity"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
