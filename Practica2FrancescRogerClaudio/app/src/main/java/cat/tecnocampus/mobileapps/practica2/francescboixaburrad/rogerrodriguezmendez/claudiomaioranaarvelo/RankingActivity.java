@@ -28,7 +28,6 @@ public class RankingActivity extends AppCompatActivity implements TodoAdapter.On
     RecyclerView rv_llista;
     TodoAdapter todoAdapter;
     RecyclerView.LayoutManager layoutManager;
-    ArrayList<UserWithGames> dataSet;
 
     ActivityResultLauncher<Intent> myActivityResultLauncherInfo;
     UserViewModel userViewModel;
@@ -47,7 +46,7 @@ public class RankingActivity extends AppCompatActivity implements TodoAdapter.On
         layoutManager = new LinearLayoutManager( this);
         rv_llista.setLayoutManager(layoutManager);
 
-        todoAdapter = new TodoAdapter(dataSet, this);
+        todoAdapter = new TodoAdapter(allUsers, this);
         rv_llista.setAdapter(todoAdapter);
 
 
@@ -68,10 +67,10 @@ public class RankingActivity extends AppCompatActivity implements TodoAdapter.On
         });
 
 
-        if(savedInstanceState==null){
+       /* if(savedInstanceState==null){
             exemple();
 
-        }
+        }*/
 
         myActivityResultLauncherInfo = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
@@ -83,7 +82,7 @@ public class RankingActivity extends AppCompatActivity implements TodoAdapter.On
 
 
    private void exemple(){
-        userViewModel.insertUser("rutgi",5);
+        userViewModel.insertUser("Maio",5);
         userViewModel.insertGame(1,1,100,"rutgi");
         todoAdapter.notifyDataSetChanged();
 
@@ -108,7 +107,7 @@ public class RankingActivity extends AppCompatActivity implements TodoAdapter.On
 
     @Override
     public void onRVtodoListener(int posicio) {
-        UserWithGames currentTodo = dataSet.get(posicio);
+        UserWithGames currentTodo = allUsers.get(posicio);
         Intent intent = new Intent(this, InfoPlayerActivity.class);
         intent.putExtra("nomEnviat", currentTodo.user.getNickName());
         intent.putExtra("tipoEnviat", currentTodo.user.getTotalScore());
