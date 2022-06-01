@@ -8,18 +8,22 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder>{
 
-    ArrayList<Todo> dades;
+    List<UserWithGames> dades;
     OnRVtodoListener onRVtodoListener;
 
-    public TodoAdapter(ArrayList<Todo>  _dades, OnRVtodoListener _onRVtodoListener) {
+    public TodoAdapter(List<UserWithGames> _dades, OnRVtodoListener _onRVtodoListener) {
         dades = _dades;
         onRVtodoListener = _onRVtodoListener;
     }
+    public void refreshData(List<UserWithGames> _dades){
+        dades = _dades;
+        notifyDataSetChanged();
 
-
+    }
 
 
     @NonNull
@@ -32,10 +36,10 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull TodoAdapter.ViewHolder holder, int position) {
-        Todo currentTodo = dades.get(position);
-        holder.tv_nickname.setText(currentTodo.getNickname()+" - ");
-        holder.tv_puntuacio.setText(currentTodo.getPuntuacio()+", ");
-        holder.tv_numero_partides.setText(String.valueOf(currentTodo.getNumero_partides()));
+        UserWithGames currentTodo = dades.get(position);
+        holder.tv_nickname.setText(currentTodo.user.getNickName() +" - ");
+        holder.tv_puntuacio.setText(currentTodo.user.getTotalScore()+", ");
+        holder.tv_numero_partides.setText(String.valueOf(currentTodo.user.getNumMach()));
     }
 
     @Override

@@ -1,7 +1,13 @@
 package cat.tecnocampus.mobileapps.practica2.francescboixaburrad.rogerrodriguezmendez.claudiomaioranaarvelo;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,47 +17,75 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RankingActivity extends AppCompatActivity implements TodoAdapter.OnRVtodoListener{
 
     RecyclerView rv_llista;
     TodoAdapter todoAdapter;
     RecyclerView.LayoutManager layoutManager;
-    ArrayList<Todo> dataSet;
+    ArrayList<UserWithGames> dataSet;
 
+    ActivityResultLauncher<Intent> myActivityResultLauncherInfo;
+    UserViewModel userViewModel;
     private int indexModify;
+    String tipusIndex;
+    List<UserWithGames> allUsers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rankinga);
+        rv_llista = findViewById(R.id.RV_lista);
 
+        allUsers = new ArrayList<UserWithGames>();
+        tipusIndex = getIntent().getStringExtra("dataSent");
         layoutManager = new LinearLayoutManager( this);
         rv_llista.setLayoutManager(layoutManager);
 
+        todoAdapter = new TodoAdapter(dataSet, this);
+        rv_llista.setAdapter(todoAdapter);
+
+
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        todoAdapter = new TodoAdapter(allUsers, this);
+        rv_llista.setAdapter(todoAdapter);
+        userViewModel.getAllUsersGame().observe(this, new Observer<List<UserWithGames>>() {
+            @Override
+            public void onChanged(List<UserWithGames> userWithGames) {
+                try{
+                    allUsers = userViewModel.getAllUsersGame().getValue();
+                    todoAdapter.refreshData(allUsers);
+                    Log.v("Clau",allUsers.toString());
+                }catch (Exception e){
+
+                }
+            }
+        });
+
+
         if(savedInstanceState==null){
             exemple();
-            todoAdapter = new TodoAdapter(dataSet, this);
-            rv_llista.setAdapter(todoAdapter);
+
         }
+
+        myActivityResultLauncherInfo = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+
+            }
+        });
     }
 
 
-    private void exemple(){
-        dataSet = new ArrayList<Todo>();
-        Todo td = new Todo("Maio","100","45");
-        dataSet.add(td);
-
-        dataSet = new ArrayList<Todo>();
-        td = new Todo("Rutgi","5","50");
-        dataSet.add(td);
-
-        dataSet = new ArrayList<Todo>();
-        td = new Todo("Fboix","0","70");
-        dataSet.add(td);
+   private void exemple(){
+        userViewModel.insertUser("rutgi",5);
+        userViewModel.insertGame(1,1,100,"rutgi");
+        todoAdapter.notifyDataSetChanged();
 
     }
 
@@ -74,14 +108,14 @@ public class RankingActivity extends AppCompatActivity implements TodoAdapter.On
 
     @Override
     public void onRVtodoListener(int posicio) {
-        Todo currentTodo = dataSet.get(posicio);
+        UserWithGames currentTodo = dataSet.get(posicio);
         Intent intent = new Intent(this, InfoPlayerActivity.class);
-        intent.putExtra("nomEnviat", currentTodo.getNickname());
-        intent.putExtra("tipoEnviat", currentTodo.getPuntuacio());
-        intent.putExtra("telefEnviat", currentTodo.getNumero_partides());
+        intent.putExtra("nomEnviat", currentTodo.user.getNickName());
+        intent.putExtra("tipoEnviat", currentTodo.user.getTotalScore());
+        intent.putExtra("telefEnviat", currentTodo.user.getNumMach());
         try{
             indexModify = posicio;
-            //myActivityResultLauncherInfo.launch(intent);
+            myActivityResultLauncherInfo.launch(intent);
         }catch (ActivityNotFoundException e){
             Toast.makeText(getApplicationContext(),  R.string.errorDoing, Toast.LENGTH_LONG).show();
             indexModify = -1;

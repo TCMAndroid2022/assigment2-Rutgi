@@ -14,6 +14,7 @@ public class User {
 
     @ColumnInfo(name = "score")
     public int totalscore;
+    public int numMach;
 
 
     public User(){
@@ -31,5 +32,8 @@ public class User {
 
     public int getTotalScore() {
         return totalscore;
+    }
+    public int getNumMach() {
+        return numMach;
     }
 }

@@ -1,10 +1,16 @@
 package cat.tecnocampus.mobileapps.practica2.francescboixaburrad.rogerrodriguezmendez.claudiomaioranaarvelo;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -42,6 +48,9 @@ public class MainActivity extends AppCompatActivity {
 
     UserViewModel userViewModel;
 
+
+    ActivityResultLauncher<Intent> myActivityResultLauncher;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,8 +76,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        userViewModel.insertUser("rutgi",5);
-        userViewModel.insertGame(1,1,100,"maio");
+        /*userViewModel.insertUser("rutgi",5);
+        userViewModel.insertGame(1,1,100,"maio");*/
 
         b_getRand.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,6 +97,13 @@ public class MainActivity extends AppCompatActivity {
                         addLetter(etx_placeToWrite.getText().toString().charAt(0));
                     }
                 }
+
+            }
+        });
+
+        myActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
 
             }
         });
@@ -114,9 +130,16 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
         switch (item.getItemId()) {
             case R.id.m_ranking_go:
-
+                intent = new Intent(this, RankingActivity.class);
+                intent.putExtra("dataSent","ranking");
+                try{
+                    myActivityResultLauncher.launch(intent);
+                }catch (ActivityNotFoundException e){
+                    Toast.makeText(getApplicationContext(),  R.string.errorDoing, Toast.LENGTH_LONG).show();
+                }
                 break;
         }
         return (super.onOptionsItemSelected(item));
