@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">Practica2FrancescRogerClaudio</string>
     <string name="actionBarAddTitle">Juego</string>
-    <string name="titleRanking">Ranking personas</string>
+    <string name="titleRanking">Ranking</string>
     <string name="errorDoing">Algo esta mal</string>
+    <string name="NickName">Sobrenom</string>
+    <string name="GetWord">Clica per aconseguir la paraula</string>
+    <string name="B_send">Enviar</string>
+    <string name="Hint_leter">lletra</string>
+    <string name="Hint_word">paraula</string>
+    <string name="TV_TitlePlay">Benvingut/da @NaMe@!</string>
 </resources>

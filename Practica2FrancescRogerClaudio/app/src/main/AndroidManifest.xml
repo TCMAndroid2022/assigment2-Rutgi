@@ -13,10 +13,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Practica2FrancescRogerClaudio">
         <activity
-            android:name=".InfoPlayerActivity"
+            android:name=".RankingActivity"
             android:exported="false" />
         <activity
-            android:name=".RankingActivity"
+            android:name=".PlayActivity"
+            android:exported="false" />
+        <activity
+            android:name=".InfoPlayerActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

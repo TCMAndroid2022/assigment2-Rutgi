@@ -32,7 +32,6 @@ public class RankingActivity extends AppCompatActivity implements TodoAdapter.On
     ActivityResultLauncher<Intent> myActivityResultLauncherInfo;
     UserViewModel userViewModel;
     private int indexModify;
-    String tipusIndex;
     List<UserWithGames> allUsers;
 
     @Override
@@ -42,7 +41,6 @@ public class RankingActivity extends AppCompatActivity implements TodoAdapter.On
         rv_llista = findViewById(R.id.RV_lista);
 
         allUsers = new ArrayList<UserWithGames>();
-        tipusIndex = getIntent().getStringExtra("dataSent");
         layoutManager = new LinearLayoutManager( this);
         rv_llista.setLayoutManager(layoutManager);
 
@@ -66,28 +64,21 @@ public class RankingActivity extends AppCompatActivity implements TodoAdapter.On
             }
         });
 
-
-       /* if(savedInstanceState==null){
-            exemple();
-
-        }*/
-
         myActivityResultLauncherInfo = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
 
             }
         });
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-
-   private void exemple(){
-        userViewModel.insertUser("Maio",5);
-        userViewModel.insertGame(1,1,100,"rutgi");
-        todoAdapter.notifyDataSetChanged();
-
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
-
 
 
     @Override
