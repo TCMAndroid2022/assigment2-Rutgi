@@ -3,9 +3,12 @@
     <string name="actionBarAddTitle">Juego</string>
     <string name="titleRanking">Ranking</string>
     <string name="errorDoing">Algo esta mal</string>
+    <string name="errorNickname">Nickname invalit</string>
+    <string name="errorWord">Paraula incorrecta</string>
     <string name="NickName">Sobrenom</string>
     <string name="GetWord">Clica per aconseguir la paraula</string>
     <string name="B_send">Enviar</string>
+    <string name="B_play">Jugar</string>
     <string name="Hint_leter">lletra</string>
     <string name="Hint_word">paraula</string>
     <string name="TV_TitlePlay">Benvingut/da @NaMe@!</string>

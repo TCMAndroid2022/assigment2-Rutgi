@@ -76,6 +76,9 @@ public class RankingActivity extends AppCompatActivity implements TodoAdapter.On
 
     @Override
     public boolean onSupportNavigateUp() {
+        Intent intent = new Intent();
+        intent.putExtra("playing", "false");
+        setResult(RESULT_OK, intent);
         finish();
         return true;
     }

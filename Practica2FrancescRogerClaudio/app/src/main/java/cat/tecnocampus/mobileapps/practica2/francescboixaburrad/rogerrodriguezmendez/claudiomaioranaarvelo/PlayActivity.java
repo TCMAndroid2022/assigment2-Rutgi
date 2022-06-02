@@ -2,6 +2,7 @@ package cat.tecnocampus.mobileapps.practica2.francescboixaburrad.rogerrodriguezm
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,13 +23,14 @@ import org.json.JSONObject;
 public class PlayActivity extends AppCompatActivity {
 
 
-    TextView tv_output, tv_nickname, tv_wellComeTitle;
-    Button b_getRand,  b_addLetter;
-    EditText et_placeToWrite;
+    TextView tv_output, tv_wellComeTitle;
+    Button b_getRand,  b_addLetter, b_addWord;
+    EditText et_letterToWrite, et_wordToWrite;
 
     //String urlRandom = "https://random-word-api.herokuapp.com/word";
     String urlRandom = "https://palabras-aleatorias-public-api.herokuapp.com/random";
     String wordResult="", wordPlayer="";
+    int counterInputs;
 
     RequestQueue rqueue;
 
@@ -37,18 +39,21 @@ public class PlayActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
 
-
         tv_output = findViewById(R.id.TV_outputWord);
-        tv_nickname = findViewById(R.id.TV_nickname);
-        tv_nickname = findViewById(R.id.TV_titolPlay);
+        tv_wellComeTitle = findViewById(R.id.TV_titolPlay);
         b_getRand = findViewById(R.id.B_getword);
         b_addLetter = findViewById(R.id.B_addLetter);
-        et_placeToWrite = findViewById(R.id.ET_writeLetter);
+        b_addWord = findViewById(R.id.B_addWord);
+        et_letterToWrite = findViewById(R.id.ET_writeLetter);
+        et_wordToWrite = findViewById(R.id.ET_writeWord);
+
+        counterInputs = 0;
 
         String strExtra = getIntent().getStringExtra("nicknameGame");
-        tv_nickname.setText(getResources().getString(R.string.TV_TitlePlay).replace("@NaMe@", strExtra));
+        tv_wellComeTitle.setText(getResources().getString(R.string.TV_TitlePlay).replace("@NaMe@", strExtra));
 
         rqueue = Volley.newRequestQueue(getApplicationContext());
+        getWord();
 
         b_getRand.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,14 +65,37 @@ public class PlayActivity extends AppCompatActivity {
         b_addLetter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!et_placeToWrite.getText().toString().equals("") ){
-                    if( !wordResult.contains(et_placeToWrite.getText().toString())){
+                if(!et_letterToWrite.getText().toString().equals("") ){
+                    counterInputs++;
+                    if( !wordResult.contains(et_letterToWrite.getText().toString())){
                         Toast.makeText(getApplicationContext(),"No hi ha lletra",Toast.LENGTH_LONG).show();
                     }else{
-                        addLetter(et_placeToWrite.getText().toString().charAt(0));
+                        addLetter(et_letterToWrite.getText().toString().charAt(0));
                     }
+                    et_letterToWrite.getText().clear();
                 }
+            }
+        });
 
+        b_addWord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String strWroted = et_wordToWrite.getText().toString();
+                if(!strWroted.equals("") ){
+                    if( !wordResult.equals(strWroted)){
+                        et_wordToWrite.setError(getResources().getString(R.string.errorWord));
+                        counterInputs++;
+                    }else{
+                        //addLetter(et_letterToWrite.getText().toString().charAt(0));
+                        tv_output.setText("CORRECTE");
+
+                        Intent intent = new Intent();
+                        intent.putExtra("playing","true");
+                        setResult(RESULT_OK,intent);
+                        finish();
+                    }
+                    et_wordToWrite.getText().clear();
+                }
             }
         });
 
@@ -77,6 +105,10 @@ public class PlayActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
+
+        Intent intent = new Intent();
+        intent.putExtra("playing", "false");
+        setResult(RESULT_CANCELED, intent);
         finish();
         return true;
     }
@@ -91,7 +123,7 @@ public class PlayActivity extends AppCompatActivity {
                             wordResult = strResponse;
                             wordPlayer="";
                             setWord();
-                            Log.d("Numero Letras", wordResult);
+                            Log.d("Paraula", wordResult);
 
                         } catch (Exception ex) {
                             tv_output.setText("Json Request failed");
@@ -120,7 +152,7 @@ public class PlayActivity extends AppCompatActivity {
         for(int i = 0;i<numberLetters(wordResult);i++){
             wordPlayer+="_";
         }
-        tv_output.setText(wordPlayer);
+        tv_output.setText(numberLetters(wordResult)+": "+wordPlayer);
     }
 
     private void addLetter(char letter){
@@ -134,6 +166,5 @@ public class PlayActivity extends AppCompatActivity {
         }
         wordPlayer = myString.toString();
         tv_output.setText(wordPlayer);
-
     }
 }

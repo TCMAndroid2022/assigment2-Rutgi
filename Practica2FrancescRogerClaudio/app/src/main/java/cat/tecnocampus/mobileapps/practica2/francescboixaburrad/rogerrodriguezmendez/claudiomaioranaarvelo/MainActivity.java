@@ -87,13 +87,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String str = et_nickname.getText().toString();
-                str.replaceAll(" ","");
-                if (!allUsers.contains(str) && !str.equals("")) {//agafem les variables?? TODO
-                    userViewModel.insertUser(str, 0);
-                    jugar(str);
-                }else if (allUsers.contains(str) && !str.equals("")){//agafem les variables?? TODO
-                    jugar(str);
+                str.replaceAll(" ","");//no volem espais en blanc
+
+                if(str.equals("")){
+                    et_nickname.setError(getResources().getString(R.string.errorNickname));
+                    return;
                 }
+
+                if (!llistaNicknames.contains(str)) {
+                    userViewModel.insertUser(str, 0);//creem el usuari
+                }
+
+                jugar(str);
                 et_nickname.getText().clear();
             }
         });
@@ -101,7 +106,23 @@ public class MainActivity extends AppCompatActivity {
         myActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
+                Intent intent = result.getData();
+                Boolean playing = Boolean.valueOf(intent.getStringExtra("playing"));
 
+
+                if(result.getResultCode() == RESULT_OK){
+                    if(playing){
+                        Toast.makeText(getApplicationContext(), "Ving de jugar", Toast.LENGTH_LONG).show();
+                    }
+                    else
+                    {
+                        Toast.makeText(getApplicationContext(), "Ving de ranking", Toast.LENGTH_LONG).show();
+                    }
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(), "Cancelat", Toast.LENGTH_LONG).show();
+                }
             }
         });
     }
