@@ -4,15 +4,20 @@
     <string name="titleRanking">Ranking</string>
     <string name="errorDoing">Algo esta mal</string>
     <string name="errorNickname">Nickname invalit</string>
+    <string name="WordNotFound">No has trobat la paraula (@pArAuLa@)!</string>
+    <string name="WordFound">Has trobat la paraula (@pArAuLa@)!</string>
     <string name="errorWord">Paraula incorrecta</string>
     <string name="errorLetter">Lletra incorrecta</string>
     <string name="Cancel"> Cancelat</string>
     <string name="NickName">Sobrenom</string>
+    <string name="idStringGame">Identificador: @iD@</string>
+    <string name="scoreStringGame">Puntuacio: @pUnTs@ </string>
     <string name="GetWord">Clica per aconseguir la paraula</string>
     <string name="B_send">Enviar</string>
+    <string name="B_resol">Resoldre</string>
     <string name="B_play">Jugar</string>
     <string name="Hint_leter">lletra</string>
     <string name="Hint_word">paraula</string>
-    <string name="TV_TitlePlay">Benvingut/da @NaMe@!</string>
+    <string name="TV_wellCome">Benvingut/da @NaMe@!</string>
     <string name="TV_lastPlay"> Hola @NaMe@!, els punts obtinguts de la ultima partida son @pUnTs@!</string>
 </resources>

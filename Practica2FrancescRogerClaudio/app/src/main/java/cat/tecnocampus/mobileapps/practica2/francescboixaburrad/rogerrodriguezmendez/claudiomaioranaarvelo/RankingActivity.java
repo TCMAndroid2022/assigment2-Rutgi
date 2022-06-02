@@ -21,6 +21,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class RankingActivity extends AppCompatActivity implements TodoAdapter.OnRVtodoListener{
@@ -31,7 +34,6 @@ public class RankingActivity extends AppCompatActivity implements TodoAdapter.On
 
     ActivityResultLauncher<Intent> myActivityResultLauncherInfo;
     UserViewModel userViewModel;
-    private int indexModify;
     List<UserWithGames> allUsers;
 
     @Override
@@ -47,27 +49,23 @@ public class RankingActivity extends AppCompatActivity implements TodoAdapter.On
         todoAdapter = new TodoAdapter(allUsers, this);
         rv_llista.setAdapter(todoAdapter);
 
-
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
-        todoAdapter = new TodoAdapter(allUsers, this);
-        rv_llista.setAdapter(todoAdapter);
         userViewModel.getAllUsersGame().observe(this, new Observer<List<UserWithGames>>() {
             @Override
             public void onChanged(List<UserWithGames> userWithGames) {
                 try{
                     allUsers = userViewModel.getAllUsersGame().getValue();
+                    Collections.sort(allUsers, new Comparator<UserWithGames>() {
+                        @Override
+                        public int compare(UserWithGames o1, UserWithGames o2) {
+                            return o2.user.totalscore - o1.user.totalscore;
+                        }
+                    });
                     todoAdapter.refreshData(allUsers);
                     Log.v("Clau",allUsers.toString());
                 }catch (Exception e){
 
                 }
-            }
-        });
-
-        myActivityResultLauncherInfo = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-            @Override
-            public void onActivityResult(ActivityResult result) {
-
             }
         });
 
@@ -103,15 +101,11 @@ public class RankingActivity extends AppCompatActivity implements TodoAdapter.On
     public void onRVtodoListener(int posicio) {
         UserWithGames currentTodo = allUsers.get(posicio);
         Intent intent = new Intent(this, InfoPlayerActivity.class);
-        intent.putExtra("nomEnviat", currentTodo.user.getNickName());
-        intent.putExtra("tipoEnviat", currentTodo.user.getTotalScore());
-        intent.putExtra("telefEnviat", currentTodo.user.getNumMach());
+        intent.putExtra("nicknameRanking", currentTodo.user.getNickName());
         try{
-            indexModify = posicio;
-            myActivityResultLauncherInfo.launch(intent);
+            startActivity(intent);
         }catch (ActivityNotFoundException e){
             Toast.makeText(getApplicationContext(),  R.string.errorDoing, Toast.LENGTH_LONG).show();
-            indexModify = -1;
         }
     }
 }

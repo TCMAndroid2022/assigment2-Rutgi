@@ -51,7 +51,7 @@ public class PlayActivity extends AppCompatActivity {
         counterInputs = 0;
 
         nickname = getIntent().getStringExtra("nicknameGame");
-        tv_wellComeTitle.setText(getResources().getString(R.string.TV_TitlePlay).replace("@NaMe@", nickname));
+        tv_wellComeTitle.setText(getResources().getString(R.string.TV_wellCome).replace("@NaMe@", nickname));
         oldScore = Integer.valueOf(getIntent().getStringExtra("oldScore"));
 
         rqueue = Volley.newRequestQueue(getApplicationContext());
@@ -73,12 +73,13 @@ public class PlayActivity extends AppCompatActivity {
                         et_letterToWrite.getText().clear();
                         et_letterToWrite.setError(getResources().getString(R.string.errorLetter));
                     }else{
-                        et_letterToWrite.getText().clear();
-                        addLetter(et_letterToWrite.getText().toString().charAt(0));
+                        char leter= et_letterToWrite.getText().toString().charAt(0);
+                        addLetter(leter);
 
                         if(wordPlayer.equals(wordResult)){
                             wordFound();
                         }
+                        et_letterToWrite.getText().clear();
                     }
                 }
             }
@@ -91,8 +92,7 @@ public class PlayActivity extends AppCompatActivity {
                 if(!strWroted.equals("") ){
                     if( !wordResult.equals(strWroted)){
                         et_wordToWrite.getText().clear();
-                        et_wordToWrite.setError(getResources().getString(R.string.errorWord));
-                        counterInputs++;
+                        wordNotFound();
                     }else{
                         tv_output.setText(wordResult);
                         wordFound();
@@ -106,17 +106,27 @@ public class PlayActivity extends AppCompatActivity {
     }
 
     private void wordFound(){
-        int punts = ( (wordPlayer.length()-counterInputs)/wordPlayer.length() )*10;
-
+        int lenght = wordResult.length();
+        double resta = (lenght-counterInputs);
+        double divisio = resta / lenght;
+        int punts = (int) Math.round(divisio * 10);
         if(punts < 0)
             punts = 0;
+        sendResult(punts, getResources().getString(R.string.WordFound).replace("@pArAuLa@", wordResult));
+    }
 
+    private void wordNotFound(){
+        sendResult(0, getResources().getString(R.string.WordNotFound).replace("@pArAuLa@", wordResult));
+    }
+
+    private void sendResult(int punts, String mesage){
         Intent intent = new Intent();
         intent.putExtra("playing","true");
-        intent.putExtra("punts",String.valueOf(punts));
         intent.putExtra("nickname",nickname);
         intent.putExtra("intents",String.valueOf(counterInputs));
+        intent.putExtra("punts",String.valueOf(punts));
         intent.putExtra("oldScore",String.valueOf(oldScore));
+        intent.putExtra("missatge",mesage);
         setResult(RESULT_OK,intent);
         finish();
     }
@@ -139,8 +149,11 @@ public class PlayActivity extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         try {
                             String strResponse = response.getJSONObject("body").getString("Word");
+                            if(strResponse.contains(" ")){
+                                getWord();
+                                return;
+                            }
                             wordResult = strResponse;
-                            wordPlayer="";
                             setWord();
                             Log.d("Paraula", wordResult);
 
@@ -168,22 +181,36 @@ public class PlayActivity extends AppCompatActivity {
     }
 
     private void setWord(){
+        String aux="";
+        wordPlayer = "";
         for(int i = 0;i<numberLetters(wordResult);i++){
+            aux += " _";
             wordPlayer+="_";
         }
-        tv_output.setText(numberLetters(wordResult)+": "+wordPlayer);
+        aux += " ";
+        tv_output.setText(numberLetters(wordResult)+": "+aux);
     }
 
     private void addLetter(char letter){
 
         StringBuilder myString = new StringBuilder(wordPlayer);
+        String aux = "";
         for(int i = 0;i<numberLetters(wordResult);i++){
-            if(wordResult.charAt(i) == letter){
+            char strchar = wordResult.charAt(i);
+            if(strchar == letter){
                 myString.setCharAt(i,letter);
+            }
 
+            if(myString.charAt(i)!='_'){
+                aux += " "+myString.charAt(i);
+            }
+            else
+            {
+                aux += " _";
             }
         }
+        aux += " ";
         wordPlayer = myString.toString();
-        tv_output.setText(wordPlayer);
+        tv_output.setText(numberLetters(wordResult)+": "+aux);
     }
 }

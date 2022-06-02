@@ -121,26 +121,29 @@ public class MainActivity extends AppCompatActivity {
             public void onActivityResult(ActivityResult result) {
                 Intent intent = result.getData();
                 Boolean playing = Boolean.valueOf(intent.getStringExtra("playing"));
-
+                if(playing == null)
+                    playing = false;
 
                 if(result.getResultCode() == RESULT_OK){
                     if(playing){
-                        String punts = intent.getStringExtra("punts");
                         String nickname = intent.getStringExtra("nickname");
                         String intents = intent.getStringExtra("intents");
                         String oldScore = intent.getStringExtra("oldScore");
-                        Toast.makeText(getApplicationContext(), "Punts: "+punts+", OldScore: "+oldScore, Toast.LENGTH_LONG).show();
+                        String punts = intent.getStringExtra("punts");
+                        String mesage = intent.getStringExtra("missatge");
 
                         Random rand = new Random();
-                        int ID = rand.nextInt();
+                        int ID = Math.abs( rand.nextInt() );
 
                         userViewModel.insertGame(ID, Integer.valueOf(intents), Integer.valueOf(punts), nickname);
                         userViewModel.updateUser(nickname, Integer.valueOf(oldScore) + Integer.valueOf(punts));
-                        tv_lastPlay.setText(getResources().getString(R.string.TV_lastPlay).replace("@NaMe@",nickname).replace("@pUnTs@", punts));
+                        tv_lastPlay.setText(getResources().getString(R.string.TV_lastPlay)
+                                                                .replace("@NaMe@",nickname)
+                                                                .replace("@pUnTs@", punts)+
+                                                "\n"+mesage);
                     }
                     else
                     {
-                        Toast.makeText(getApplicationContext(), "Ving de ranking", Toast.LENGTH_LONG).show();
                         tv_lastPlay.setText("");
                     }
                 }
