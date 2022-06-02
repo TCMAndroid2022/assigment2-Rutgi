@@ -31,11 +31,61 @@ public class DatabaseController {
 
     }
 
+    public void deleteUser(String nickName){
+        User user = new User(nickName,0);
+        new deleteAsyncUser(userDao).execute(user);
+    }
+
+    public void updateUser(String nickName, int totalScore){
+        User user = new User(nickName,totalScore);
+        new updateAsyncUser(userDao).execute(user);
+    }
     public void setGame(int gameId, int numIntents, int scoreGame, String nickOwnerGame){
         Game game = new Game(gameId,numIntents,scoreGame,nickOwnerGame);
         new insertAsyncGame(gameDao).execute(game);
     }
 
+
+
+    private static class deleteAsyncUser{
+        private UserDao userDao;
+        private Executor executor = Executors.newSingleThreadExecutor();
+
+        deleteAsyncUser(UserDao user){
+            userDao = user;
+        }
+
+        public void execute(User user){this.doInBackground(user);}
+
+        private void doInBackground(final User user) {
+            this.executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    userDao.delete(user);
+                }
+            });
+        }
+    }
+
+    private static class updateAsyncUser{
+        private UserDao userDao;
+        private Executor executor = Executors.newSingleThreadExecutor();
+
+        updateAsyncUser(UserDao user){
+            userDao = user;
+        }
+
+        public void execute(User user){this.doInBackground(user);}
+
+        private void doInBackground(final User user) {
+            this.executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    userDao.update(user);
+                }
+            });
+        }
+    }
 
     private static class insertAsyncUser{
         private UserDao userDao;

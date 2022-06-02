@@ -41,6 +41,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     EditText et_nickname;
     UserViewModel userViewModel;
     Button b_sendNickname;
+    TextView tv_lastPlay;
 
 
     ActivityResultLauncher<Intent> myActivityResultLauncher;
@@ -64,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
         et_nickname = findViewById(R.id.ET_inputNickname);
         b_sendNickname = findViewById(R.id.B_sendNickname);
+        tv_lastPlay = findViewById(R.id.TV_lastPlay);
 
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
         userViewModel.getAllUsersGame().observe(this, new Observer<List<UserWithGames>>() {
@@ -88,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String str = et_nickname.getText().toString();
                 str.replaceAll(" ","");//no volem espais en blanc
+                int oldScore = 0;
 
                 if(str.equals("")){
                     et_nickname.setError(getResources().getString(R.string.errorNickname));
@@ -97,8 +101,17 @@ public class MainActivity extends AppCompatActivity {
                 if (!llistaNicknames.contains(str)) {
                     userViewModel.insertUser(str, 0);//creem el usuari
                 }
+                else
+                {
+                    for (UserWithGames users: allUsers) {
+                        if(users.user.nickname.equals(str)){
+                            oldScore = users.user.totalscore;
+                            break;
+                        }
+                    }
+                }
 
-                jugar(str);
+                jugar(str, oldScore);
                 et_nickname.getText().clear();
             }
         });
@@ -112,24 +125,37 @@ public class MainActivity extends AppCompatActivity {
 
                 if(result.getResultCode() == RESULT_OK){
                     if(playing){
-                        Toast.makeText(getApplicationContext(), "Ving de jugar", Toast.LENGTH_LONG).show();
+                        String punts = intent.getStringExtra("punts");
+                        String nickname = intent.getStringExtra("nickname");
+                        String intents = intent.getStringExtra("intents");
+                        String oldScore = intent.getStringExtra("oldScore");
+                        Toast.makeText(getApplicationContext(), "Punts: "+punts+", OldScore: "+oldScore, Toast.LENGTH_LONG).show();
+
+                        Random rand = new Random();
+                        int ID = rand.nextInt();
+
+                        userViewModel.insertGame(ID, Integer.valueOf(intents), Integer.valueOf(punts), nickname);
+                        userViewModel.updateUser(nickname, Integer.valueOf(oldScore) + Integer.valueOf(punts));
+                        tv_lastPlay.setText(getResources().getString(R.string.TV_lastPlay).replace("@NaMe@",nickname).replace("@pUnTs@", punts));
                     }
                     else
                     {
                         Toast.makeText(getApplicationContext(), "Ving de ranking", Toast.LENGTH_LONG).show();
+                        tv_lastPlay.setText("");
                     }
                 }
                 else
                 {
-                    Toast.makeText(getApplicationContext(), "Cancelat", Toast.LENGTH_LONG).show();
+                    tv_lastPlay.setText(getResources().getString(R.string.Cancel));
                 }
             }
         });
     }
 
-    private void jugar(String nickname){
+    private void jugar(String nickname, int oldScore){
         Intent intent = new Intent(this, PlayActivity.class);
         intent.putExtra("nicknameGame",nickname);
+        intent.putExtra("oldScore",String.valueOf(oldScore));
         try{
             myActivityResultLauncher.launch(intent);
         }catch (ActivityNotFoundException e){

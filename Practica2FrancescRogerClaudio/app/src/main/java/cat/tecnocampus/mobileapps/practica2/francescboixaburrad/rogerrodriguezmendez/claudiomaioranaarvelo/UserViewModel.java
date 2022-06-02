@@ -24,7 +24,14 @@ public class UserViewModel extends AndroidViewModel {
 
     public void insertUser(String nickName, int totalScore){
         repository.setUser(nickName,totalScore);
+    }
 
+    public void deleteUser(String nickName){
+        repository.deleteUser(nickName);
+    }
+
+    public void updateUser(String nickName, int totalScore){
+        repository.updateUser(nickName, totalScore);
     }
 
     public void insertGame(int gameId, int numIntents, int scoreGame, String nickOwnerGame){

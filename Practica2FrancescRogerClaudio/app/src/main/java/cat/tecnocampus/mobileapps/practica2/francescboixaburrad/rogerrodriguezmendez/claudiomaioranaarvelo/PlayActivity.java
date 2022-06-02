@@ -30,7 +30,8 @@ public class PlayActivity extends AppCompatActivity {
     //String urlRandom = "https://random-word-api.herokuapp.com/word";
     String urlRandom = "https://palabras-aleatorias-public-api.herokuapp.com/random";
     String wordResult="", wordPlayer="";
-    int counterInputs;
+    int counterInputs, oldScore;
+    String nickname;
 
     RequestQueue rqueue;
 
@@ -49,8 +50,9 @@ public class PlayActivity extends AppCompatActivity {
 
         counterInputs = 0;
 
-        String strExtra = getIntent().getStringExtra("nicknameGame");
-        tv_wellComeTitle.setText(getResources().getString(R.string.TV_TitlePlay).replace("@NaMe@", strExtra));
+        nickname = getIntent().getStringExtra("nicknameGame");
+        tv_wellComeTitle.setText(getResources().getString(R.string.TV_TitlePlay).replace("@NaMe@", nickname));
+        oldScore = Integer.valueOf(getIntent().getStringExtra("oldScore"));
 
         rqueue = Volley.newRequestQueue(getApplicationContext());
         getWord();
@@ -68,11 +70,16 @@ public class PlayActivity extends AppCompatActivity {
                 if(!et_letterToWrite.getText().toString().equals("") ){
                     counterInputs++;
                     if( !wordResult.contains(et_letterToWrite.getText().toString())){
-                        Toast.makeText(getApplicationContext(),"No hi ha lletra",Toast.LENGTH_LONG).show();
+                        et_letterToWrite.getText().clear();
+                        et_letterToWrite.setError(getResources().getString(R.string.errorLetter));
                     }else{
+                        et_letterToWrite.getText().clear();
                         addLetter(et_letterToWrite.getText().toString().charAt(0));
+
+                        if(wordPlayer.equals(wordResult)){
+                            wordFound();
+                        }
                     }
-                    et_letterToWrite.getText().clear();
                 }
             }
         });
@@ -83,18 +90,13 @@ public class PlayActivity extends AppCompatActivity {
                 String strWroted = et_wordToWrite.getText().toString();
                 if(!strWroted.equals("") ){
                     if( !wordResult.equals(strWroted)){
+                        et_wordToWrite.getText().clear();
                         et_wordToWrite.setError(getResources().getString(R.string.errorWord));
                         counterInputs++;
                     }else{
-                        //addLetter(et_letterToWrite.getText().toString().charAt(0));
-                        tv_output.setText("CORRECTE");
-
-                        Intent intent = new Intent();
-                        intent.putExtra("playing","true");
-                        setResult(RESULT_OK,intent);
-                        finish();
+                        tv_output.setText(wordResult);
+                        wordFound();
                     }
-                    et_wordToWrite.getText().clear();
                 }
             }
         });
@@ -103,11 +105,28 @@ public class PlayActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(R.string.actionBarAddTitle);
     }
 
+    private void wordFound(){
+        int punts = ( (wordPlayer.length()-counterInputs)/wordPlayer.length() )*10;
+
+        if(punts < 0)
+            punts = 0;
+
+        Intent intent = new Intent();
+        intent.putExtra("playing","true");
+        intent.putExtra("punts",String.valueOf(punts));
+        intent.putExtra("nickname",nickname);
+        intent.putExtra("intents",String.valueOf(counterInputs));
+        intent.putExtra("oldScore",String.valueOf(oldScore));
+        setResult(RESULT_OK,intent);
+        finish();
+    }
+
     @Override
     public boolean onSupportNavigateUp() {
 
         Intent intent = new Intent();
-        intent.putExtra("playing", "false");
+        intent.putExtra("playing", "true");
+        intent.putExtra("punts",String.valueOf(0));
         setResult(RESULT_CANCELED, intent);
         finish();
         return true;
